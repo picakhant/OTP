@@ -1,0 +1,22 @@
+//user verify email
+const userVerify = async (req, res) => {
+  try {
+    // get email token
+    const { emailToken } = req.body;
+
+    const user = await userModel.findOne({ emailToken });
+    if (!userModel) {
+      throw Error("User not found, token may be invalid!");
+    }
+
+    user.emailToken = null;
+    user.isVefify = true;
+    await user.save();
+
+    const token = createToken(user._id);
+
+    return res.status(200).json(user);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
